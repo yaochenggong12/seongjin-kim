@@ -3,62 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고등학생 교과목 Q&A</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>할일 관리 앱</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-graduation-cap"></i> 고등학생 교과목 Q&A</h1>
-            <p class="subtitle">궁금한 것을 물어보세요! 함께 공부해요!</p>
-        </header>
-        
-        <!-- 질문 작성 폼 -->
-        <div class="question-form">
-            <h2><i class="fas fa-question-circle"></i> 질문하기</h2>
-            <select id="subject">
-                <option value="">교과목 선택</option>
-                <option value="수학">수학</option>
-                <option value="영어">영어</option>
-                <option value="국어">국어</option>
-                <option value="사회">사회</option>
-                <option value="과학">과학</option>
-            </select>
-            <input type="text" id="title" placeholder="제목을 입력하세요">
-            <textarea id="content" placeholder="질문 내용을 자세히 입력하세요"></textarea>
-            <button onclick="submitQuestion()"><i class="fas fa-paper-plane"></i> 질문 등록</button>
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen py-8">
+    <!-- 로그인 섹션 -->
+    <div id="loginSection" class="container max-w-md mx-auto px-4 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">로그인</h2>
+            <button id="googleLogin" class="btn btn-light border hover:bg-gray-100">
+                <img src="https://www.google.com/favicon.ico" class="w-6 h-6 inline mr-2" alt="Google">
+                Google로 로그인
+            </button>
         </div>
+    </div>
 
-        <!-- 질문 목록 -->
-        <div class="questions-list">
-            <h2><i class="fas fa-list"></i> 질문 목록</h2>
-            <div class="filter-bar">
-                <select id="filterSubject" onchange="filterQuestions()">
-                    <option value="">전체 교과목</option>
-                    <option value="수학">수학</option>
-                    <option value="영어">영어</option>
-                    <option value="국어">국어</option>
-                    <option value="사회">사회</option>
-                    <option value="과학">과학</option>
-                </select>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="검색어를 입력하세요" onkeyup="filterQuestions()">
-                    <i class="fas fa-search"></i>
+    <!-- 할일 관리 섹션 -->
+    <div id="todoSection" class="container max-w-2xl mx-auto px-4" style="display: none;">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <i class="fas fa-check-circle text-blue-500 mr-2"></i>할일 관리
+                </h1>
+                <div class="flex items-center">
+                    <span id="userEmail" class="mr-4 text-gray-600"></span>
+                    <button id="logoutBtn" class="btn btn-outline-danger btn-sm">
+                        로그아웃
+                    </button>
                 </div>
             </div>
-            <div id="questionsList"></div>
+            
+            <div class="todo-input mb-6">
+                <div class="input-group">
+                    <input type="text" id="taskInput" 
+                           class="form-control border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                           placeholder="할일을 입력하세요">
+                    <button onclick="addTask()" 
+                            class="btn btn-primary px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                        <i class="fas fa-plus mr-2"></i>추가
+                    </button>
+                </div>
+            </div>
+
+            <ul id="taskList" class="space-y-3">
+                <!-- 할일 목록이 여기에 추가됩니다 -->
+            </ul>
         </div>
     </div>
 
-    <!-- 질문 상세보기 모달 -->
-    <div id="questionModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modalContent"></div>
-        </div>
-    </div>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+    <!-- Firebase 초기화 스크립트 -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBe2seTsoFLdg1dlFavC5DDKVnp0yARi74",
+            authDomain: "read-4afb4.firebaseapp.com",
+            projectId: "read-4afb4",
+            storageBucket: "read-4afb4.firebasestorage.app",
+            messagingSenderId: "419584362168",
+            appId: "1:419584362168:web:545f23e9b85f3231abd64d",
+            measurementId: "G-8VE12SDD48"
+        };
+        
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
